@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from services import resolve_city_and_send
+
 
 router = APIRouter()
 
