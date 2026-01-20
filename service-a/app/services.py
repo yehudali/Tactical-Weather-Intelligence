@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime
 
+SERVICE_B_URL = "http://127.0.0.1:8001/"
 # --------- Helper: Geocoding ----------
 def fetch_coordinates(location_name: str):
     url = "https://geocoding-api.open-meteo.com/v1/search"
@@ -77,11 +78,24 @@ def ingest_weather_for_location(location_name):
 
     return records
 
+def send_to_service_b(coordinates):
+    response = requests.post(
+        f"{SERVICE_B_URL}/clean",
+        json=coordinates
+    )
+
+    if not response.ok:
+        raise Exception("failed to send data to service B")
+
+    return response.json()
+
 def resolve_city_and_send(location_name):
     coordinates = fetch_coordinates(location_name)
     fetch_hourly_weather(coordinates["latitude"], coordinates["longitude"])
     data = ingest_weather_for_location(location_name)
+    send_to_service_b(data)
     return data
+
 
 
 
