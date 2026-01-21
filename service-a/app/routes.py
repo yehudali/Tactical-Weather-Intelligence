@@ -5,8 +5,7 @@ router = APIRouter()
 
 
 @router.post("/ingest")
-def get_data_ingestion(location_name:str):
-
+def get_data_ingestion(location_name: str):
     try:
         data = resolve_city_and_send(location_name)
         return  data

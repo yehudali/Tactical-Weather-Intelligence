@@ -1,7 +1,7 @@
 import requests
 from datetime import datetime
 
-SERVICE_B_URL = "http://127.0.0.1:8001/"
+SERVICE_B_URL = "http://127.0.0.1:8001"
 # --------- Helper: Geocoding ----------
 def fetch_coordinates(location_name: str):
     url = "https://geocoding-api.open-meteo.com/v1/search"
@@ -43,7 +43,7 @@ def fetch_hourly_weather(latitude: float, longitude: float):
 
 
 # --------- Main Ingestion Logic ----------
-def ingest_weather_for_location(location_name):
+def ingest_weather_for_location(location_name: str) -> list[dict]:
     records = []
 
 
@@ -64,7 +64,7 @@ def ingest_weather_for_location(location_name):
     # 3. Flatten to records (ONE record per hour per location)
     for i in range(len(times)):
         record = {
-            "timestamp": datetime.fromisoformat(times[i]),
+            "timestamp": times[i],
             "location_name": location["location_name"],
             "country": location["country"],
             "latitude": location["latitude"],
@@ -78,10 +78,10 @@ def ingest_weather_for_location(location_name):
 
     return records
 
-def send_to_service_b(coordinates):
+def send_to_service_b(weather_data: list[dict]):
     response = requests.post(
         f"{SERVICE_B_URL}/clean",
-        json=coordinates
+        json=weather_data
     )
 
     if not response.ok:
@@ -89,12 +89,10 @@ def send_to_service_b(coordinates):
 
     return response.json()
 
-def resolve_city_and_send(location_name):
-    coordinates = fetch_coordinates(location_name)
-    fetch_hourly_weather(coordinates["latitude"], coordinates["longitude"])
-    data = ingest_weather_for_location(location_name)
-    send_to_service_b(data)
-    return data
+def resolve_city_and_send(location_name: str):
+    weather_data = ingest_weather_for_location(location_name)
+    result = send_to_service_b(weather_data)
+    return result
 
 
 
