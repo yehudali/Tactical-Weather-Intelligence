@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 router = APIRouter()
 
 
-@router.post("/")
+@router.post("/clean")
 def hhhhhh():
     try:
         return {"meseg":"hii"}
