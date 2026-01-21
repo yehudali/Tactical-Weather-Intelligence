@@ -1,7 +1,15 @@
 import requests
 from datetime import datetime
+import os
 
-SERVICE_B_URL = "http://127.0.0.1:8001"
+def get_dhe_env():
+  host_b = os.getenv("SERVIC_B_HOST", "127.0.0.1")
+  port_b = os.getenv("SERVIC_B_PORT", 8012)
+  return host_b, port_b
+
+host,port = get_dhe_env()
+
+SERVICE_B_URL = f"http://{host}:{port}"
 # --------- Helper: Geocoding ----------
 def fetch_coordinates(location_name: str):
     url = "https://geocoding-api.open-meteo.com/v1/search"
