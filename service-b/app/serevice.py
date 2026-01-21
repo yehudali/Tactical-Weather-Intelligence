@@ -25,3 +25,11 @@ def auxiliary_function(num:float|int):
 def create_wind_status_colum(df: DataFrame):
     df["wind_status"] = df["wind_speed"].apply(auxiliary_function)
     return df
+
+
+def manage_dataframe(data): 
+        df = create_data_frame(data)
+        df = config_typs_db(df)
+        df = create_temperature_category_colum(df)
+        df = create_wind_status_colum(df)
+        return df
